@@ -10,6 +10,7 @@ import java.util.Random;
 import si.io.ClusterFile;
 import si.io.SIFTFile;
 import java.lang.Math;
+//prueba git desde mac a suse
 
 /**
  * Clase que debe implementar el algoritmo de k-medias.
