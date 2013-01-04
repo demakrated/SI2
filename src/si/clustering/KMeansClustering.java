@@ -1,4 +1,3 @@
-//prueba
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -7,8 +6,10 @@ package si.clustering;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 import si.io.ClusterFile;
 import si.io.SIFTFile;
+import java.lang.Math;
 
 /**
  * Clase que debe implementar el algoritmo de k-medias.
@@ -39,7 +40,6 @@ public class KMeansClustering {
      * resultado de k-medias: centroides de cada cluster
      */
     private byte[][] centroides;
-    //cambio git
 
     /**
      * Constructor
@@ -73,6 +73,29 @@ public class KMeansClustering {
     public void setPertenencias(int[] pertenencias) {
         this.pertenencias = pertenencias;
     }
+    
+    public byte distanciaEuclidea(byte[][] vector){
+        
+        double centroide, vc;
+        double res1=0,res2=0;
+        
+        for(int i=0; i<tamVector; i++){
+            for(int j=0; j<tamVector; j++){
+                //centroide = (double)this.getCentroides()[i][j];
+                //vc = vector[i][j];
+                res1 = Math.sqrt(Math.pow(((double)this.getCentroides()[i][j] - (double)vector[i][j]),2));
+                res2 += res1;
+                res1 = 0;
+            }
+            res1 = 0;
+            res2 = res2/tamVector;
+        }
+        
+        
+        
+        
+        return 0;
+    }
 
     //TODO: implementad en este método el algoritmo de k-medias
     /**
@@ -86,7 +109,29 @@ public class KMeansClustering {
      * IMPORTANTE: 
      *  - el método debe guardar los centroides de los clusters obtenidos en la variable miembro "centroides"
      */
-    public void doClustering(int k, int maxIter) {
+    public void doClustering(int k, int maxIter) {  //k son los clusters a formar
+        
+        this.numClusters = k;   //genero los centroides segun el numero de clusters que tengo y su tamaño
+        this.setCentroides(new byte[numClusters][tamVector]);
+        Random random = new Random();
+        
+        for(int i=0; i< numClusters; i++){      //voy asignando clusters a los valores de la semilla random
+            this.getCentroides()[i] = vectores.get(random.nextInt());
+        }
+        
+        //mirar distancias de cada vector con cada cluster y asignar pertenencias
+        for(int i=0; i< numClusters; i++){
+            
+        }
+        int iteracion = 0;
+        
+        //calcular distancias ente puntos de centroides
+        //cada "vector" es un punto en 128 dimensiones (como si tuviera 3 dimensiones x, y, z pero 128)
+        //por tanto cada centroide apunta a un vector, a un punto
+        //gjj
+        
+        
+        
     }
 
 
