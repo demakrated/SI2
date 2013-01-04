@@ -74,7 +74,7 @@ public class KMeansClustering {
         this.pertenencias = pertenencias;
     }
     
-    public byte distanciaEuclidea(byte[][] vector){
+    public double distanciaEuclidea(byte[][] vector){
         
         double centroide, vc;
         double res1=0,res2=0;
@@ -114,6 +114,7 @@ public class KMeansClustering {
         this.numClusters = k;   //genero los centroides segun el numero de clusters que tengo y su tamaño
         this.setCentroides(new byte[numClusters][tamVector]);
         Random random = new Random();
+        int iteracion = 0;
         
         for(int i=0; i< numClusters; i++){      //voy asignando clusters a los valores de la semilla random
             this.getCentroides()[i] = vectores.get(random.nextInt());
@@ -123,15 +124,11 @@ public class KMeansClustering {
         for(int i=0; i< numClusters; i++){
             
         }
-        int iteracion = 0;
         
         //calcular distancias ente puntos de centroides
         //cada "vector" es un punto en 128 dimensiones (como si tuviera 3 dimensiones x, y, z pero 128)
         //por tanto cada centroide apunta a un vector, a un punto
-        //gjj
-        
-        
-        
+
     }
 
 
