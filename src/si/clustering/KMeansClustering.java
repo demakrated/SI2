@@ -11,7 +11,7 @@ import si.io.ClusterFile;
 import si.io.SIFTFile;
 import java.lang.Math;
 //prueba git desde mac a suse
-//prueba ssh mac
+//commit desde github cliente
 
 /**
  * Clase que debe implementar el algoritmo de k-medias.
