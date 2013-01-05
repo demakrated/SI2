@@ -7,9 +7,11 @@ package si.clustering;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import si.io.ClusterFile;
 import si.io.DirNavigator;
+import si.io.QuantFile;
 import si.io.SIFTFile;
 
 /**
@@ -80,7 +82,29 @@ public class Quantizer {
         //Ya implementado: lectura de los descriptores SIFT de un archivo
         SIFTFile sf = new SIFTFile();
         List<byte[]> descriptores = sf.readSIFTFile(fichSIFT);
+        KMeansClustering km = new KMeansClustering(descriptores);
+        ArrayList<Double> cluster = new ArrayList<Double>(); 
         
+        km.setCentroides(clusters);
+        //ASIGNAR VECTORES A CLUSTERS
+            //mirar distancias de cada punto con cada cluster y asignar pertenencias
+            for(int j=0;j<descriptores.size();j++){ //cojo punto a punto
+                for(int i=0; i< clusters.length; i++){  //calculo distancias o centroide, selecciono la menor y se lo asigno
+                    //calculo cada distancia con cada punto a un cluster
+                    cluster.add(km.distanciaEuclidea(descriptores.get(j),i));  //para un punto, calculo las distancias a cada cluster
+                }
+                double minimo = km.minimo(cluster);   //guardo el valor minimo
+                for(int i=0;i<clusters.length; i++){    //busco el indice minimo en el cluster y lo asigno
+                    if(cluster.get(i) == minimo){
+                        km.getPertenencias()[j] = i;    //para cada vector asigno su pertenencia a un cluster
+                    }
+                }
+                cluster.clear();
+            }
+            
+            QuantFile qf = new QuantFile();
+            
+            qf.escribirFichero(nomFichResult, km.getPertenencias());
 
         //1. Implementar la cuantización en si (asignación de cada descriptor al cluster más cercano)
         // Los centroides de los clusters están en la variable miembro "clusters"
