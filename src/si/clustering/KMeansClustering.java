@@ -6,10 +6,14 @@ package si.clustering;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Random;
 import si.io.ClusterFile;
 import si.io.SIFTFile;
 import java.lang.Math;
+import java.util.Date;
+import si.io.Grafico;
+import si.io.Prueba2D;
 //prueba git desde mac a suse
 //commit desde github cliente
 
@@ -86,7 +90,7 @@ public class KMeansClustering {
                 res2 += res1;
                 res1 = 0;
             }
-            res2 = Math.sqrt(res2); //media de un punto conun cluster
+            res2 = Math.sqrt(res2); //media de un punto con un cluster
             resultado += res2;
             res2 = 0;
    
@@ -94,44 +98,20 @@ public class KMeansClustering {
     }
     
     //funcion que me devuelve el minimo de un vector
-    public int minimo(int [] vector){
+    public int minimo(ArrayList<Integer> vector){
         
-        int minimo = vector[0];
+        int minimo = vector.get(0);
         int temp = Integer.MAX_VALUE;
         
-        for(int i=0; i<vector.length;i++){
-            if(temp < vector[i]){
+        for(int i=0; i<vector.size();i++){
+            if(temp < vector.get(i)){
                 minimo = temp;
             }
         }
         return minimo;
     }
     
-    public int [] buscarCoincidencias(int posicion){
-        
-        int resultado = 0;
-        byte [] nuevo;
-        byte [][] coincidencias;
-        
-        for(int i=0; i<numVectores; i++){
-            if(pertenencias[i] == posicion){
-                resultado++;
-            }
-        }
-        
-        coincidencias = new byte[tamVector][numVectores];
-        
-        //CAMBIAR ESTO, DEVOLVER UN VECTOR DE VECTORES ASIGNADOS AL CLUSTER
-        for(int j=0;j<numClusters;j++){
-            for(int i=0;i<numVectores; i++){
-                if(pertenencias[i] == j){
-                    coincidencias[j] = vectores.get(i);
-                }
-            }
-        }
-        
-        return coincidencias;
-    }
+    
 
     //TODO: implementad en este método el algoritmo de k-medias
     /**
@@ -150,39 +130,66 @@ public class KMeansClustering {
         this.numClusters = k;   //genero los centroides segun el numero de clusters que tengo y su tamaño
         this.setCentroides(new byte[numClusters][tamVector]);
         Random random = new Random();
+        random.setSeed(System.nanoTime());
         int iteracion = 0;
-        int [] cluster = new int[numClusters];    //variable que contendrá los valores a cada centroide de un punto
+        ArrayList<Integer> cluster = new ArrayList<Integer>();    //variable que contendrá los valores a cada centroide de un punto
         
-        for(int i=0; i< numClusters; i++){      //voy asignando clusters a los valores de la semilla random
-            this.getCentroides()[i] = vectores.get(random.nextInt());
+        //INICIALIZACIÓN DE CLUSTERS
+        for(int i=0; i<numClusters; i++){      //voy asignando clusters a los valores de la semilla random
+            this.getCentroides()[i] = vectores.get(random.nextInt(tamVector)); //cambiar al random!"!!!!--------->>>>>><<<<<<<<<----------
+            //random = random.nextInt(tamVector);
         }
         
-        //mirar distancias de cada punto con cada cluster y asignar pertenencias
-        for(int j=0;j<numVectores;j++){ //cojo punto a punto
-            for(int i=0; i< numClusters; i++){  //calculo distancias o centroide, selecciono la menor y se lo asigno
-                //calculo cada media con cada punto a un luster
-                cluster[i] = distanciaEuclidea(vectores.get(j),i);  //para un punto, calculo las distancias a cada cluster
-                pertenencias[i] = minimo(cluster);     //calculo el minimo de todos losclusteres con el punto
-            }
-        }
+        boolean cambios = true;
         
-        int [] centroidesNuevos = new int[numClusters];
-        byte [] puntos = new byte;
-        
-        int coincidencias = 0;
-        
-         
-        //bucle que reasigna clusters
-        for(int p=0;p<numClusters;p++){
-            coincidencias = buscarCoincidencias(pertenencias[i]);
+        while(cambios && iteracion > maxIter){
+            
+            cambios = false;
+            //ASIGNAR VECTORES A CLUSTERS
+            //mirar distancias de cada punto con cada cluster y asignar pertenencias
             for(int j=0;j<numVectores;j++){ //cojo punto a punto
                 for(int i=0; i< numClusters; i++){  //calculo distancias o centroide, selecciono la menor y se lo asigno
-                    //calculo cada media con cada punto a un luster
-                    centroidesNuevos[i] = distanciaEuclidea(vectores.get(j),i);  //para un punto, calculo las distancias a cada cluster
-                    pertenencias[i] = minimo(cluster);     //calculo el minimo de todos losclusteres con el punto
+                    //calculo cada distancia con cada punto a un cluster
+                    cluster.add(distanciaEuclidea(vectores.get(j),i));  //para un punto, calculo las distancias a cada cluster
                 }
+                int minimo = minimo(cluster);   //guardo el valor minimo
+                for(int i=0;i<numClusters; i++){    //busco el indice minimo en el cluster y lo asigno
+                    if(cluster.get(i) == minimo){
+                        if(pertenencias[j] != i){
+                            cambios = true;
+                        }
+                        pertenencias[j] = i;    //para cada vector asigno su pertenencia a un cluster
+                    }
+                }
+                cluster.clear();
             }
 
+            //int [] centroidesNuevos = new int[numVectores];
+            ArrayList<byte[]> puntos = new ArrayList<byte[]>();
+            byte [] centroideNuevo = new byte[tamVector];
+
+            int coincidencias = 0;
+
+
+            //bucle que recalcula clusters
+            for(int p=0;p<numClusters;p++){ //para cda cluster genero vector con los k lo tienen asignado
+                for(int i=0;i<numVectores;i++){ //cojo punto a punto
+                    if(pertenencias[i] == p){    //si dicho vector pertenece al cluster
+                       puntos.add(vectores.get(i));    //guardo los vectores del cluster en el array
+                    }
+                }
+                double media = 0;
+                //calculo las medias con los vectores de cada cluster
+                for(int i=0;i<tamVector;i++){
+                    for(int j=0;j<puntos.size();j++){
+                        media += puntos.get(j)[i];
+                    }
+                    centroideNuevo[i] = (byte) ((byte)media/puntos.size());    //voy asignando las componentes del nuevo centroide
+                    media = 0;
+                }
+                this.getCentroides()[p] = centroideNuevo;      //reasigno centroides
+
+            }
         }
         
         //calcular distancias ente puntos de centroides
@@ -193,6 +200,7 @@ public class KMeansClustering {
 
 
     public static void main(String[] args) throws IOException {
+        
         if (args.length != 4) {
             System.err.println("Número de parámetros incorrecto");
             System.out.println("Uso: java -cp si.clustering.KMeansClustering -jar practica2.jar  k max_iteraciones dir_bd_imag fich_result");
@@ -202,7 +210,10 @@ public class KMeansClustering {
             System.err.println("\t fich_result: fichero donde se guardarán los centroides de los clusters encontrados");
         } else {
 
-            List<byte[]> vectores = new SIFTFile().readFileset(args[2]);
+            List<byte[]> vectores = new Prueba2D().readFile(args[4]); //prueba2D
+            Grafico grafico = new Grafico(); //prueba2D
+            grafico.run(vectores, clusterer.getCentroides(), clusterer.getCentroidesIniciales()); //prueba2D
+            //List<byte[]> vectores = new SIFTFile().readFileset(args[2]);
             KMeansClustering clusterer = new KMeansClustering(vectores);
             clusterer.doClustering(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
             new ClusterFile().writeClusters(clusterer.getCentroides(), args[3]);
