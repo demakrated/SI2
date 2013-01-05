@@ -76,27 +76,61 @@ public class KMeansClustering {
         this.pertenencias = pertenencias;
     }
     
-    public double distanciaEuclidea(byte[][] vector){
-        
-        double centroide, vc;
-        double res1=0,res2=0;
-        
-        for(int i=0; i<tamVector; i++){
+    //funcion que calcula distancias euclideas con los vectores (o puntos)
+    public int distanciaEuclidea(byte [] vector, int centroide){
+
+        double res1=0,res2=0, resultado=0;
+
             for(int j=0; j<tamVector; j++){
-                //centroide = (double)this.getCentroides()[i][j];
-                //vc = vector[i][j];
-                res1 = Math.sqrt(Math.pow(((double)this.getCentroides()[i][j] - (double)vector[i][j]),2));
+                res1 = Math.pow(((double)vector[j] - (double)this.getCentroides()[centroide][j]),2);
                 res2 += res1;
                 res1 = 0;
             }
-            res1 = 0;
-            res2 = res2/tamVector;
+            res2 = Math.sqrt(res2); //media de un punto conun cluster
+            resultado += res2;
+            res2 = 0;
+   
+        return (int)resultado;
+    }
+    
+    //funcion que me devuelve el minimo de un vector
+    public int minimo(int [] vector){
+        
+        int minimo = vector[0];
+        int temp = Integer.MAX_VALUE;
+        
+        for(int i=0; i<vector.length;i++){
+            if(temp < vector[i]){
+                minimo = temp;
+            }
+        }
+        return minimo;
+    }
+    
+    public int [] buscarCoincidencias(int posicion){
+        
+        int resultado = 0;
+        byte [] nuevo;
+        byte [][] coincidencias;
+        
+        for(int i=0; i<numVectores; i++){
+            if(pertenencias[i] == posicion){
+                resultado++;
+            }
         }
         
+        coincidencias = new byte[tamVector][numVectores];
         
+        //CAMBIAR ESTO, DEVOLVER UN VECTOR DE VECTORES ASIGNADOS AL CLUSTER
+        for(int j=0;j<numClusters;j++){
+            for(int i=0;i<numVectores; i++){
+                if(pertenencias[i] == j){
+                    coincidencias[j] = vectores.get(i);
+                }
+            }
+        }
         
-        
-        return 0;
+        return coincidencias;
     }
 
     //TODO: implementad en este método el algoritmo de k-medias
@@ -117,14 +151,38 @@ public class KMeansClustering {
         this.setCentroides(new byte[numClusters][tamVector]);
         Random random = new Random();
         int iteracion = 0;
+        int [] cluster = new int[numClusters];    //variable que contendrá los valores a cada centroide de un punto
         
         for(int i=0; i< numClusters; i++){      //voy asignando clusters a los valores de la semilla random
             this.getCentroides()[i] = vectores.get(random.nextInt());
         }
         
-        //mirar distancias de cada vector con cada cluster y asignar pertenencias
-        for(int i=0; i< numClusters; i++){
-            
+        //mirar distancias de cada punto con cada cluster y asignar pertenencias
+        for(int j=0;j<numVectores;j++){ //cojo punto a punto
+            for(int i=0; i< numClusters; i++){  //calculo distancias o centroide, selecciono la menor y se lo asigno
+                //calculo cada media con cada punto a un luster
+                cluster[i] = distanciaEuclidea(vectores.get(j),i);  //para un punto, calculo las distancias a cada cluster
+                pertenencias[i] = minimo(cluster);     //calculo el minimo de todos losclusteres con el punto
+            }
+        }
+        
+        int [] centroidesNuevos = new int[numClusters];
+        byte [] puntos = new byte;
+        
+        int coincidencias = 0;
+        
+         
+        //bucle que reasigna clusters
+        for(int p=0;p<numClusters;p++){
+            coincidencias = buscarCoincidencias(pertenencias[i]);
+            for(int j=0;j<numVectores;j++){ //cojo punto a punto
+                for(int i=0; i< numClusters; i++){  //calculo distancias o centroide, selecciono la menor y se lo asigno
+                    //calculo cada media con cada punto a un luster
+                    centroidesNuevos[i] = distanciaEuclidea(vectores.get(j),i);  //para un punto, calculo las distancias a cada cluster
+                    pertenencias[i] = minimo(cluster);     //calculo el minimo de todos losclusteres con el punto
+                }
+            }
+
         }
         
         //calcular distancias ente puntos de centroides
