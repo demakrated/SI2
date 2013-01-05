@@ -15,6 +15,7 @@ import java.util.Scanner;
  */
 public class QuantFile {
     
+    //funcion para escribir en un fichero la spertenencias
     public void escribirFichero(String fichero, int [] pertenencias) throws FileNotFoundException{
         
         PrintWriter pw = new PrintWriter(fichero);
@@ -24,6 +25,7 @@ public class QuantFile {
         pw.close();
     }
     
+    //funcion para leer las pertenencias y devolverlas de un fichero
     public int [] leerFichero(File fichero) throws FileNotFoundException{
         
         Scanner sc = new Scanner(fichero);

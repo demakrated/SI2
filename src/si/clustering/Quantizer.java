@@ -102,15 +102,10 @@ public class Quantizer {
                 cluster.clear();
             }
             
+            //escribo en el fichero con la clase de ayuda QuantFile
             QuantFile qf = new QuantFile();
             
             qf.escribirFichero(nomFichResult, km.getPertenencias());
-
-        //1. Implementar la cuantización en si (asignación de cada descriptor al cluster más cercano)
-        // Los centroides de los clusters están en la variable miembro "clusters"
-             
-        //2. Implementar el guardado de datos en el fichero de nombre "nommFichResult"
-        
     }
 
    

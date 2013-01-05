@@ -43,7 +43,7 @@ public class NaiveBayesLearning {
         ArrayList<Integer> vector = new ArrayList<Integer>();
         ArrayList<ArrayList <Integer>> vectores = new ArrayList<ArrayList <Integer>>();
         
-        int contador = 0;
+        int contadorClases = 0;
         
         //formula: 1 + veces k aparece el cluster / total de clusters + sumatorio vector
         //vamos viajando por los subdirectorios...
@@ -52,35 +52,35 @@ public class NaiveBayesLearning {
             for(int i=0; i<tamVoc;i++){
                 vector.add(0);
             }
-            contador++;     //contador de clases
+            contadorClases++;     //contador de clases
             //...y procesando todos los ficheros con la extensión especificada (.quant) en del directorio  
             for (File f : dn.getFiles(dir)) {
                 System.out.println("\t Procesando fichero " + f.getName());
                 pertenencias = qf.leerFichero(f);
-                for(int i=0;i<pertenencias.length;i++){
-                    vector.set(pertenencias[i], vector.get(pertenencias[i])+1);
+                for(int i=0;i<pertenencias.length;i++){ //guardo en el vector, en la posición del índice indicada
+                    vector.set(pertenencias[i], vector.get(pertenencias[i])+1); //por las pertenencias, en la posicion + 1
                 }  
-            }
+            }   //guardo el vector clonándolo para poder borrarlo y reusarl la variable
             vectores.add((ArrayList <Integer>) vector.clone());
             vector.clear(); 
         }
        
         System.out.println("Construyendo tabla de frecuencias...");
         
-        
-        double [][] matriz = new double[tamVoc][contador];
+        //matriz o tabla con los valores a guardar
+        double [][] matriz = new double[tamVoc][contadorClases];
         int sumatorio=0;
         
-        for(int i=0;i<contador;i++){
+        for(int i=0;i<contadorClases;i++){
             sumatorio=0;
-            for(int j=0;j<tamVoc;j++){
+            for(int j=0;j<tamVoc;j++){  //hago el sumatorio
                 sumatorio += vectores.get(i).get(j);
             }
-            for(int j=0;j<tamVoc;j++){
+            for(int j=0;j<tamVoc;j++){  //aplico la fórmula del aprendizaje y guardo datos
                 matriz[j][i] = (1 + (double)vectores.get(i).get(j) / (double)(tamVoc + sumatorio));
             }
         }
-        
+        //escribo y guardo la tabla en un fichero
         BayesFile bf = new BayesFile();
         bf.escribirFichero(nomFichResult, matriz);
     }

@@ -15,6 +15,7 @@ import java.util.Scanner;
  */
 public class BayesFile {
     
+    //funcion para escribir en un fichero la matri
     public void escribirFichero(String fichero, double [][] matriz) throws FileNotFoundException{
         
         PrintWriter pw = new PrintWriter(fichero);
@@ -30,6 +31,7 @@ public class BayesFile {
         pw.close();
     }
     
+    //funcion para leer un fichero o construir la matriz
     public double [][] leerFichero(File fichero) throws FileNotFoundException{
         
         Scanner sc = new Scanner(fichero);
@@ -38,14 +40,13 @@ public class BayesFile {
        
         matriz = new double[sc.nextInt()][sc.nextInt()];
         sc.nextLine();
-        
 
-           for(int i=0; i<matriz.length;i++){
-                for(int j=0;j<matriz[0].length;j++){
-                    matriz[i][j] = sc.nextDouble();
-                }
+        for (int i = 0; i < matriz.length; i++) {
+            for (int j = 0; j < matriz[0].length; j++) {
+                matriz[i][j] = sc.nextDouble();
             }
-        
+        }
+
         sc.close();
         
         return matriz;

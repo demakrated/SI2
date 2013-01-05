@@ -47,6 +47,7 @@ public class KMeansClustering {
      */
     private byte[][] centroides;
     
+    //centroides iniciales aleatorios
     private byte[][] centroidesIniciales;
 
     /**
@@ -66,22 +67,27 @@ public class KMeansClustering {
         this.pertenencias = new int[numVectores];
     }
 
+    //getter de los centroides
     public byte[][] getCentroides() {
         return centroides;
     }
 
+    //setter de los centroides
     public void setCentroides(byte[][] centroides) {
         this.centroides = centroides;
     }
 
+    //getter de las pertenencias
     public int[] getPertenencias() {
         return pertenencias;
     }
 
+    //setter de las pertenencias
     public void setPertenencias(int[] pertenencias) {
         this.pertenencias = pertenencias;
     }
     
+    //getter de centroides iniciales
     public byte [][] getCentroidesIniciales(){
         
         return centroidesIniciales;
@@ -109,7 +115,6 @@ public class KMeansClustering {
     public double minimo(ArrayList<Double> vector){
         
         double minimo = vector.get(0);
-        //double temp = Double.MAX_VALUE;
         
         for(int i=1; i<vector.size();i++){
             if(vector.get(i) < minimo){
@@ -139,10 +144,8 @@ public class KMeansClustering {
         this.setCentroides(new byte[numClusters][tamVector]);
         this.centroidesIniciales = new byte [numClusters][tamVector];
         Random random = new Random();
-        ///random.setSeed(System.nanoTime());
         int iteracion = 0;
         ArrayList<Double> cluster = new ArrayList<Double>();    //variable que contendrá los valores a cada centroide de un punto
-        int num = 0;
         
         //INICIALIZACIÓN DE CLUSTERS
         for(int i=0; i<numClusters; i++){      //voy asignando clusters a los valores de la semilla random
@@ -150,8 +153,10 @@ public class KMeansClustering {
             this.centroidesIniciales[i] = this.getCentroides()[i];  //me guardo los iniciales
         }
         
+        //variable para salir antes del bucle si no hay cambios en loas pertenencias
         boolean cambios = true;
         
+        //bucle principal de K-Medias
         while(cambios && iteracion > maxIter){
             
             cambios = false;
@@ -173,14 +178,10 @@ public class KMeansClustering {
                 }
                 cluster.clear();
             }
-
-            //int [] centroidesNuevos = new int[numVectores];
+            
+            //array que contendrá los puntos de cada cluster
             ArrayList<byte[]> puntos = new ArrayList<byte[]>();
             
-
-            //int coincidencias = 0;
-
-
             //bucle que recalcula clusters
             for(int p=0;p<numClusters;p++){ //para cda cluster genero vector con los k lo tienen asignado
                 for(int i=0;i<numVectores;i++){ //cojo punto a punto
@@ -203,11 +204,6 @@ public class KMeansClustering {
                         
             }
         }
-        
-        //calcular distancias ente puntos de centroides
-        //cada "vector" es un punto en 128 dimensiones (como si tuviera 3 dimensiones x, y, z pero 128)
-        //por tanto cada centroide apunta a un vector, a un punto
-
     }
 
 
