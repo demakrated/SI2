@@ -39,11 +39,11 @@ public class NaiveBayesClassification {
         ArrayList<Integer> tamanyo = new ArrayList<Integer>();
         double masProbable = 0;
         
-        DirNavigator dn = new DirNavigator(nomFichQuant, ".quant");
+        DirNavigator dn = new DirNavigator("bd_test", ".quant");
         File[] dirsClases = dn.getSubdirs();
-        File fich = new File("resultado-aprendizaje.txt");
+        File fich = new File(nomFichProbs);
         matriz = bf.leerFichero(fich);
-        int contador = 0;
+        //int contador = 0;
         
         for (File dir : dirsClases) {
             System.out.println("Clase " + dir.getName());
@@ -53,14 +53,14 @@ public class NaiveBayesClassification {
                 
                 for(int i=0;i<matriz.length;i++){   //recorro filas (clases)
                     for(int j=0;j<matriz[0].length;j++){
-                        sumatorio += Math.log10(matriz[i][j]);  //guardo resultados del sumatorio de cada clase
+                        sumatorio += Math.log(matriz[i][j]);  //guardo resultados del sumatorio de cada clase
                     }
                 }
             }
             probabilidades.add(sumatorio);  //guardo la probabilidad de cada clase
             for(int i=0;i<probabilidades.size();i++){
-                System.out.println("La probabilidad de esta clase es: " + probabilidades.get(i));
-                System.out.println();
+                //System.out.println("La clase más probable: " + probabilidades.get(i));
+                System.out.println(probabilidades.get(i));
             }
             probClases.add(maximo(probabilidades)); //guardo la mejor probabilidad de cada clase
             sumatorio = 0;

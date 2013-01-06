@@ -76,7 +76,7 @@ public class NaiveBayesLearning {
                 sumatorio += vectores.get(i).get(j);
             }
             for(int j=0;j<tamVoc;j++){  //aplico la fórmula del aprendizaje y guardo datos
-                matriz[j][i] = (1 + (double)vectores.get(i).get(j) / (double)(tamVoc + sumatorio));
+                matriz[j][i] = (1.0 + (double)vectores.get(i).get(j)) / ((double)(tamVoc + sumatorio));
             }
         }
         //escribo y guardo la tabla en un fichero
