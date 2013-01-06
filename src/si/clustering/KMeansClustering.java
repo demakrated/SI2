@@ -190,14 +190,14 @@ public class KMeansClustering {
                     }
                 }
                 byte [] centroideNuevo = new byte[tamVector];
-                double media = 0;
+                int media = 0;
                 //calculo las medias con los vectores de cada cluster
                 for(int i=0;i<tamVector;i++){
                     for(int j=0;j<puntos.size();j++){
                         media += puntos.get(j)[i];
                     }   //voy asignando las componentes del nuevo centroide
-                    if(puntos.isEmpty()){
-                        centroideNuevo[i] = (byte) ((byte)media/puntos.size()); 
+                    if(!puntos.isEmpty()){
+                        centroideNuevo[i] = (byte) (media/puntos.size()); 
                         this.getCentroides()[p] = centroideNuevo;      //reasigno centroides
                     }
                     media = 0;
