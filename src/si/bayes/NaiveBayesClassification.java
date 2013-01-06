@@ -41,51 +41,47 @@ public class NaiveBayesClassification {
         
         DirNavigator dn = new DirNavigator(nomFichQuant, ".quant");
         File[] dirsClases = dn.getSubdirs();
+        File fich = new File("resultado-aprendizaje.txt");
+        matriz = bf.leerFichero(fich);
         int contador = 0;
         
-        //arreglar moverse entre ficheros y directorios
         for (File dir : dirsClases) {
-            matriz = null;
-            matriz1 = null;
+            System.out.println("Clase " + dir.getName());
+            clases.add(dir.getName()); //guardo el nombre de cada clase en el array
             for (File f : dn.getFiles(dir)) {
-                if(contador == 0){
-                    matriz = bf.leerFichero(f);
-                    tamanyo.add(matriz.length);
-                }
-                System.err.println(f.getName());
+                System.out.println("\t Procesando fichero " + f.getName());
                 
-            }
-            //arreglar hasta aqui
-            //matriz = matriz1;
-            //cada fila es una clase en la matriz, y cada posicion la prob de cada foto
-            for(int i=0;i<matriz.length && contador < 1;i++){   //recorro filas (clases)
-                for(int j=0;j<matriz[0].length;j++){
-                    sumatorio += Math.log(matriz[i][j]);  //guardo resultados del sumatorio de cada clase
+                for(int i=0;i<matriz.length;i++){   //recorro filas (clases)
+                    for(int j=0;j<matriz[0].length;j++){
+                        sumatorio += Math.log10(matriz[i][j]);  //guardo resultados del sumatorio de cada clase
+                    }
                 }
-                probabilidades.add(sumatorio);  //guardo la probabilidad de cada clase
-                probClases.add(minimo(probabilidades));
-                sumatorio = 0;
-                clases.add(dir.getName());  //guardo el nombre de cada clase en el array
-                probabilidades.clear();
             }
-            contador++;
+            probabilidades.add(sumatorio);  //guardo la probabilidad de cada clase
+            for(int i=0;i<probabilidades.size();i++){
+                System.out.println("La probabilidad de esta clase es: " + probabilidades.get(i));
+                System.out.println();
+            }
+            probClases.add(maximo(probabilidades)); //guardo la mejor probabilidad de cada clase
+            sumatorio = 0;
+            probabilidades.clear();
         }
-        masProbable = minimo(probClases);   //clase más probable
+        masProbable = maximo(probClases);   //clase más probable
         System.out.print("La clase más probable es: ");
         System.out.println(clases.get(probClases.indexOf(masProbable)));
     }
     
-    public double minimo(ArrayList<Double> array){
+    public double maximo(ArrayList<Double> array){
         
-        double minimo = array.get(0);
+        double maximo = array.get(0);
         
         for(int i=1;i<array.size();i++){
-            if(array.get(i) < minimo){
-                minimo = array.get(i);
+            if(array.get(i) > maximo){
+                maximo = array.get(i);
             }
         }
         
-        return minimo;
+        return maximo;
     }
     
     public static void main(String[] args ) throws IOException, FileNotFoundException, ClassNotFoundException {

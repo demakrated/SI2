@@ -7,6 +7,7 @@ package si.io;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.Locale;
 import java.util.Scanner;
 
 /**
@@ -35,14 +36,19 @@ public class BayesFile {
     public double [][] leerFichero(File fichero) throws FileNotFoundException{
         
         Scanner sc = new Scanner(fichero);
+        sc.useLocale(Locale.ENGLISH);
+        int filas,columnas;
         
         double [][] matriz;
+        
+        filas = sc.nextInt();
+        columnas = sc.nextInt();
        
-        matriz = new double[sc.nextInt()][sc.nextInt()];
-        sc.nextLine();
+        matriz = new double[filas][columnas];
+        //sc.nextLine();
 
-        for (int i = 0; i < matriz.length; i++) {
-            for (int j = 0; j < matriz[0].length; j++) {
+        for (int i = 0; i < filas; i++) {
+            for (int j = 0; j < columnas; j++) {
                 matriz[i][j] = sc.nextDouble();
             }
         }

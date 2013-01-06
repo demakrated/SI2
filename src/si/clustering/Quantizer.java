@@ -82,6 +82,7 @@ public class Quantizer {
         //Ya implementado: lectura de los descriptores SIFT de un archivo
         SIFTFile sf = new SIFTFile();
         List<byte[]> descriptores = sf.readSIFTFile(fichSIFT);
+        
         KMeansClustering km = new KMeansClustering(descriptores);
         ArrayList<Double> cluster = new ArrayList<Double>(); 
         
@@ -89,9 +90,9 @@ public class Quantizer {
         //ASIGNAR VECTORES A CLUSTERS
             //mirar distancias de cada punto con cada cluster y asignar pertenencias
             for(int j=0;j<descriptores.size();j++){ //cojo punto a punto
-                for(int i=0; i< clusters.length; i++){  //calculo distancias o centroide, selecciono la menor y se lo asigno
+                for(int i=0; i< clusters.length; i++){  //calculo distancias, selecciono la menor y se lo asigno
                     //calculo cada distancia con cada punto a un cluster
-                    cluster.add(km.distanciaEuclidea(descriptores.get(j),i));  //para un punto, calculo las distancias a cada cluster
+                    cluster.add(km.distanciaEuclidea(descriptores.get(j),i));
                 }
                 double minimo = km.minimo(cluster);   //guardo el valor minimo
                 for(int i=0;i<clusters.length; i++){    //busco el indice minimo en el cluster y lo asigno

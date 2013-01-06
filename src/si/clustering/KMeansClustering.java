@@ -149,7 +149,7 @@ public class KMeansClustering {
         
         //INICIALIZACIÓN DE CLUSTERS
         for(int i=0; i<numClusters; i++){      //voy asignando clusters a los valores de la semilla random
-            this.getCentroides()[i] = vectores.get(random.nextInt(numVectores)); //cambiar al random!"!!!!--------->>>>>><<<<<<<<<----------
+            this.getCentroides()[i] = vectores.get(random.nextInt(numVectores)); 
             this.centroidesIniciales[i] = this.getCentroides()[i];  //me guardo los iniciales
         }
         
@@ -157,15 +157,15 @@ public class KMeansClustering {
         boolean cambios = true;
         
         //bucle principal de K-Medias
-        while(cambios && iteracion > maxIter){
+        while(cambios && iteracion < maxIter){
             
             cambios = false;
             //ASIGNAR VECTORES A CLUSTERS
             //mirar distancias de cada punto con cada cluster y asignar pertenencias
             for(int j=0;j<numVectores;j++){ //cojo punto a punto
-                for(int i=0; i< numClusters; i++){  //calculo distancias o centroide, selecciono la menor y se lo asigno
+                for(int i=0; i< numClusters; i++){  //calculo distancias, selecciono la menor y se lo asigno
                     //calculo cada distancia con cada punto a un cluster
-                    cluster.add(distanciaEuclidea(vectores.get(j),i));  //para un punto, calculo las distancias a cada cluster
+                    cluster.add(distanciaEuclidea(vectores.get(j),i));  //calculo las distancias a cada cluster
                 }
                 double minimo = minimo(cluster);   //guardo el valor minimo
                 for(int i=0;i<numClusters; i++){    //busco el indice minimo en el cluster y lo asigno
@@ -183,7 +183,7 @@ public class KMeansClustering {
             ArrayList<byte[]> puntos = new ArrayList<byte[]>();
             
             //bucle que recalcula clusters
-            for(int p=0;p<numClusters;p++){ //para cda cluster genero vector con los k lo tienen asignado
+            for(int p=0;p<numClusters;p++){ //para cada cluster genero vector con los k lo tienen asignado
                 for(int i=0;i<numVectores;i++){ //cojo punto a punto
                     if(pertenencias[i] == p){    //si dicho vector pertenece al cluster
                        puntos.add(vectores.get(i));    //guardo los vectores del cluster en el array
@@ -195,21 +195,26 @@ public class KMeansClustering {
                 for(int i=0;i<tamVector;i++){
                     for(int j=0;j<puntos.size();j++){
                         media += puntos.get(j)[i];
+                    }   //voy asignando las componentes del nuevo centroide
+                    if(puntos.isEmpty()){
+                        centroideNuevo[i] = (byte) ((byte)media/puntos.size()); 
+                        this.getCentroides()[p] = centroideNuevo;      //reasigno centroides
                     }
-                    centroideNuevo[i] = (byte) ((byte)media/puntos.size());    //voy asignando las componentes del nuevo centroide
                     media = 0;
                 }
-                this.getCentroides()[p] = centroideNuevo;      //reasigno centroides
+                
                 puntos.clear();
                         
             }
+            iteracion++;
+            System.out.println(iteracion);
         }
     }
 
 
     public static void main(String[] args) throws IOException {
         
-        if (args.length <= 3) {
+        if (args.length < 2) {
             System.err.println("Número de parámetros incorrecto");
             System.out.println("Uso: java -cp si.clustering.KMeansClustering -jar practica2.jar  k max_iteraciones dir_bd_imag fich_result");
             System.err.println("\t k: nº de clusters a generar (tamaño del 'vocabulario visual')");
@@ -218,17 +223,23 @@ public class KMeansClustering {
             System.err.println("\t fich_result: fichero donde se guardarán los centroides de los clusters encontrados");
         } else {
 
-            List<byte[]> vectores = new Prueba2D().readFile(args[4]); //prueba2D
-            Grafico grafico = new Grafico(); //prueba2D
+            //List<byte[]> vectores = new Prueba2D().readFile(args[4]); //prueba2D
+            //Grafico grafico = new Grafico(); //prueba2D
+            //KMeansClustering clusterer = new KMeansClustering(vectores);
             
-            
-            KMeansClustering clusterer = new KMeansClustering(vectores);
-            clusterer.doClustering(Integer.parseInt(args[0]), Integer.parseInt(args[1])); 
-            grafico.run(vectores, clusterer.getCentroides(), clusterer.getCentroidesIniciales()); //prueba2D
-             //List<byte[]> vectores = new SIFTFile().readFileset(args[2]);         
-            
+             
+            //grafico.run(vectores, clusterer.getCentroides(), clusterer.getCentroidesIniciales()); //prueba2D
+            List<byte[]> vectores = new SIFTFile().readFileset(args[2]);         
+            //KMeansClustering clusterer = new KMeansClustering(vectores);
+            //clusterer.doClustering(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
             //new ClusterFile().writeClusters(clusterer.getCentroides(), args[3]);
-            
+            for(int k=20;k<=60;k+=10) {
+                KMeansClustering clusterer = new KMeansClustering(vectores);
+                System.out.println("Entra doClustering con k = " + k);
+                clusterer.doClustering(k, Integer.parseInt(args[1]));
+                System.out.println("Fin doClustering");
+                new ClusterFile().writeClusters(clusterer.getCentroides(), k+"clusters"+Integer.parseInt(args[1])+"iteraciones.txt");
+            }
         }
     }
 }

@@ -45,7 +45,6 @@ public class NaiveBayesLearning {
         
         int contadorClases = 0;
         
-        //formula: 1 + veces k aparece el cluster / total de clusters + sumatorio vector
         //vamos viajando por los subdirectorios...
        for (File dir : dirsClases) {
             System.out.println("Clase " + dir.getName());
@@ -58,7 +57,7 @@ public class NaiveBayesLearning {
                 System.out.println("\t Procesando fichero " + f.getName());
                 pertenencias = qf.leerFichero(f);
                 for(int i=0;i<pertenencias.length;i++){ //guardo en el vector, en la posición del índice indicada
-                    vector.set(pertenencias[i], vector.get(pertenencias[i])+1); //por las pertenencias, en la posicion + 1
+                    vector.set(pertenencias[i], vector.get(pertenencias[i])+1);
                 }  
             }   //guardo el vector clonándolo para poder borrarlo y reusarl la variable
             vectores.add((ArrayList <Integer>) vector.clone());
