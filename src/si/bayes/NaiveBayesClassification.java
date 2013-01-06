@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import si.io.BayesFile;
 import si.io.DirNavigator;
+import si.io.QuantFile;
+import si.io.BayesFile;
 
 /**
  * Clasificación con naive bayes
@@ -34,41 +36,45 @@ public class NaiveBayesClassification {
         
         double sumatorio = 0;
         ArrayList<Double> probabilidades = new ArrayList<Double>();
-        ArrayList<Double> probClases = new ArrayList<Double>();
-        ArrayList<String> clases = new ArrayList<String>();
+        ArrayList<String> clases = new BayesFile().leerClases(new File(nomFichProbs));
         ArrayList<Integer> tamanyo = new ArrayList<Integer>();
+        ArrayList<ArrayList <Double>> probClases = new ArrayList<ArrayList <Double>>();
         double masProbable = 0;
         
-        DirNavigator dn = new DirNavigator("bd_test", ".quant");
+        DirNavigator dn = new DirNavigator("../imag_test", ".quant");
         File[] dirsClases = dn.getSubdirs();
         File fich = new File(nomFichProbs);
         matriz = bf.leerFichero(fich);
-        //int contador = 0;
+        int filas=0, columnas=0;
         
         for (File dir : dirsClases) {
             System.out.println("Clase " + dir.getName());
-            clases.add(dir.getName()); //guardo el nombre de cada clase en el array
+            //clases.add(dir.getName()); //guardo el nombre de cada clase en el array
             for (File f : dn.getFiles(dir)) {
                 System.out.println("\t Procesando fichero " + f.getName());
-                
-                for(int i=0;i<matriz.length;i++){   //recorro filas (clases)
-                    for(int j=0;j<matriz[0].length;j++){
-                        sumatorio += Math.log(matriz[i][j]);  //guardo resultados del sumatorio de cada clase
+                int[] pertenencias = new QuantFile().leerFichero(f);
+                for(int i=0;i<matriz[0].length;i++){   //recorro columnas (clases)
+                    for(int j=0;j<pertenencias.length;j++){
+                        sumatorio += Math.log(matriz[pertenencias[j]][i]);  //guardo resultados del sumatorio de cada clase
                     }
+                    probabilidades.add(sumatorio);  //guardo la probabilidad de cada clase
+                    System.out.println(sumatorio);
+                    sumatorio = 0;
                 }
+                probClases.add((ArrayList <Double>)probabilidades.clone());
+                probabilidades.clear();
+                //filas++;
             }
-            probabilidades.add(sumatorio);  //guardo la probabilidad de cada clase
-            for(int i=0;i<probabilidades.size();i++){
-                //System.out.println("La clase más probable: " + probabilidades.get(i));
-                System.out.println(probabilidades.get(i));
-            }
-            probClases.add(maximo(probabilidades)); //guardo la mejor probabilidad de cada clase
-            sumatorio = 0;
-            probabilidades.clear();
+            
+            //columnas++;
         }
-        masProbable = maximo(probClases);   //clase más probable
-        System.out.print("La clase más probable es: ");
-        System.out.println(clases.get(probClases.indexOf(masProbable)));
+        for(int i=0;i<probClases.size();i++){
+            masProbable = maximo(probClases.get(i));   //clase más probable
+            System.out.print("La clase mas probable es: ");
+            System.out.println(clases.get(probClases.get(i).indexOf(masProbable))); 
+        }
+        
+        
     }
     
     public double maximo(ArrayList<Double> array){

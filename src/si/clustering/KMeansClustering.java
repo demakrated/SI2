@@ -233,7 +233,7 @@ public class KMeansClustering {
             //KMeansClustering clusterer = new KMeansClustering(vectores);
             //clusterer.doClustering(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
             //new ClusterFile().writeClusters(clusterer.getCentroides(), args[3]);
-            for(int k=60;k<=60;k+=10) {
+            for(int k=50;k<=50;k+=10) {
                 KMeansClustering clusterer = new KMeansClustering(vectores);
                 System.out.println("Entra doClustering con k = " + k);
                 clusterer.doClustering(k, Integer.parseInt(args[1]));

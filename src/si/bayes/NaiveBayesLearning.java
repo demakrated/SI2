@@ -42,12 +42,14 @@ public class NaiveBayesLearning {
         int [] pertenencias;
         ArrayList<Integer> vector = new ArrayList<Integer>();
         ArrayList<ArrayList <Integer>> vectores = new ArrayList<ArrayList <Integer>>();
+        ArrayList<String> clases = new ArrayList<String>();
         
         int contadorClases = 0;
         
         //vamos viajando por los subdirectorios...
        for (File dir : dirsClases) {
             System.out.println("Clase " + dir.getName());
+            clases.add(dir.getName());
             for(int i=0; i<tamVoc;i++){
                 vector.add(0);
             }
@@ -81,7 +83,7 @@ public class NaiveBayesLearning {
         }
         //escribo y guardo la tabla en un fichero
         BayesFile bf = new BayesFile();
-        bf.escribirFichero(nomFichResult, matriz);
+        bf.escribirFichero(nomFichResult, matriz,clases);
     }
 
     public static void main(String[] args) throws FileNotFoundException, IOException {
